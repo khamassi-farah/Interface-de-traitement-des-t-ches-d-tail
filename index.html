@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REIS KYC - Traitement de tâche</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fbff;
+      --border: #dbe4ee;
+      --border-strong: #c9d5e2;
+      --text: #1b2a3a;
+      --text-soft: #637487;
+      --text-muted: #8a98a8;
+      --navy-900: #0f2942;
+      --navy-800: #163653;
+      --navy-700: #1e4a70;
+      --primary: #1976e8;
+      --primary-dark: #125fbd;
+      --primary-soft: #eaf4ff;
+      --teal: #0f9d94;
+      --teal-soft: #e8fbf8;
+      --success: #1c9b67;
+      --success-soft: #eaf8f1;
+      --warning: #d98a1f;
+      --warning-soft: #fff4e5;
+      --danger: #d84c4c;
+      --danger-soft: #fdecec;
+      --shadow-sm: 0 8px 24px rgba(16, 42, 67, 0.08);
+      --shadow-md: 0 14px 32px rgba(16, 42, 67, 0.12);
+      --radius: 20px;
+      --radius-sm: 12px;
+      --transition: 0.22s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .topbar {
+      height: 68px;
+      background: linear-gradient(90deg, var(--navy-900), var(--navy-700));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-left,
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .burger {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand small {
+      font-size: 12px;
+      opacity: 0.72;
+      margin-left: 4px;
+      vertical-align: top;
+    }
+
+    .topbar-right span {
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    .page {
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: 24px 20px 110px;
+    }
+
+    .breadcrumb {
+      color: var(--text-soft);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #15314d, #1f517d);
+      color: #fff;
+      border-radius: 24px;
+      padding: 24px 26px;
+      box-shadow: var(--shadow-md);
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,0.86);
+      line-height: 1.6;
+      font-size: 15px;
+      max-width: 860px;
+    }
+
+    .hero-meta {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
+      color: rgba(255,255,255,0.96);
+    }
+
+    .hero-side {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 18px;
+      align-self: stretch;
+    }
+
+    .hero-side h2 {
+      margin: 0 0 14px;
+      font-size: 16px;
+    }
+
+    .hero-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero-list div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0 20px;
+    }
+
+    .tab {
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab.active {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1.35fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 20px 22px 0;
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .card-head h3 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .card-head p {
+      margin: 6px 0 0;
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .card-body {
+      padding: 18px 22px 22px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .info-item {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fff, #fbfdff);
+      padding: 14px;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: var(--text-soft);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .info-sub {
+      color: var(--text-soft);
+      font-size: 13px;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge-critical {
+      color: #b83232;
+      background: var(--danger-soft);
+    }
+
+    .badge-progress {
+      color: #125fbd;
+      background: var(--primary-soft);
+    }
+
+    .badge-owned {
+      color: #0c7f78;
+      background: var(--teal-soft);
+    }
+
+    .action-strip {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(25,118,232,0.22);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--teal);
+      border: 1px solid #bce8e2;
+    }
+
+    .section-block {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      background: #fff;
+    }
+
+    .section-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      background: linear-gradient(90deg, #1976e8, #1f84f6);
+      color: #fff;
+      min-height: 54px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .section-content {
+      padding: 18px;
+      background: #fff;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field.two-col {
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--text-soft);
+      line-height: 1.5;
+      margin-top: -2px;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 12px;
+      border: 1px solid var(--border-strong);
+      background: #fff;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    input[readonly] {
+      background: #f3f7fb;
+      color: #44576b;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(25, 118, 232, 0.12);
+    }
+
+    .decision-box {
+      border: 1px solid #cce2ff;
+      background: linear-gradient(180deg, #f8fbff, #ffffff);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .decision-box h4 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: var(--primary-dark);
+    }
+
+    .decision-box p {
+      margin: 0;
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .file-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .file-link {
+      min-height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 14px;
+      background: #fbfdff;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .timeline-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .timeline-content {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: #fbfdff;
+    }
+
+    .timeline-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .timeline-meta {
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .diagram-box {
+      border: 1px dashed #bfd0e2;
+      border-radius: 16px;
+      background: #fbfdff;
+      min-height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.7;
+      padding: 20px;
+    }
+
+    .sticky-actions {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 120;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -8px 26px rgba(16, 42, 67, 0.08);
+    }
+
+    .sticky-inner {
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .sticky-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--text-soft);
+      font-size: 13px;
+    }
+
+    .sticky-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-danger {
+      background: #fff;
+      color: var(--danger);
+      border: 1px solid #f2c4c4;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(28, 155, 103, 0.22);
+    }
+
+    @media (max-width: 1280px) {
+      .hero,
+      .main-grid,
+      .field.two-col,
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page {
+        padding: 16px 14px 120px;
+      }
+
+      .topbar {
+        padding: 0 14px;
+      }
+
+      .brand {
+        font-size: 20px;
+      }
+
+      .hero h1 {
+        font-size: 24px;
+      }
+
+      .sticky-inner {
+        align-items: stretch;
+      }
+
+      .sticky-buttons {
+        width: 100%;
+      }
+
+      .sticky-buttons .btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="burger">☰</div>
+      <div class="brand">ReisKYC<small>™</small></div>
+    </div>
+    <div class="topbar-right">
+      <span>fr ▾</span>
+      <span>🔔 3 alertes</span>
+      <span>👤 Farah</span>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="breadcrumb">Accueil / Cas & alertes / Traitement de tâche / JURISCONSEILS</div>
+
+    <section class="hero">
+      <div>
+        <h1>Décision de conformité — JURISCONSEILS</h1>
+        <p>
+          Analysez les informations du dossier, consultez les éléments justificatifs
+          et enregistrez votre décision dans un parcours clair, orienté conformité et validation métier.
+        </p>
+
+        <div class="hero-meta">
+          <span class="chip">ID processus : d4320c34-f7bb-11f0-9107-00155d3c0701</span>
+          <span class="chip">Créée le : 22/01/2026 • 17:57</span>
+          <span class="chip">Assignée à : Farah</span>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <h2>Résumé de la tâche</h2>
+        <div class="hero-list">
+          <div><span>Statut</span><strong>En cours</strong></div>
+          <div><span>Priorité</span><strong>Critique</strong></div>
+          <div><span>Propriétaire</span><strong>Farah</strong></div>
+          <div><span>Échéance</span><strong>23/01/2026 • 17:57</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <a href="#" class="tab active">📝 Formulaire</a>
+      <a href="#" class="tab">📎 Documents</a>
+      <a href="#" class="tab">💬 Commentaires</a>
+      <a href="#" class="tab">🕘 Historique</a>
+      <a href="#" class="tab">🗺️ Diagramme</a>
+    </nav>
+
+    <section class="main-grid">
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <h3>Informations de la tâche</h3>
+            <p>Vue synthétique des informations utiles avant la prise de décision.</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Statut</div>
+              <div class="info-value"><span class="badge badge-progress">En cours de traitement</span></div>
+              <div class="info-sub">La tâche a été ouverte et attend une décision.</div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-label">Priorité</div>
+              <div class="info-value"><span class="badge badge-critical">Critique</span></div>
+              <div class="info-sub">Traitement recommandé sans délai.</div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-label">Assignation</div>
+              <div class="info-value">Farah Khamassi</div>
+              <div class="info-sub">Propriétaire actuel du traitement.</div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-label">Réclamation</div>
+              <div class="info-value">Non renseignée</div>
+              <div class="info-sub">Aucune date de réclamation associée.</div>
+            </div>
+
+            <div class="info-item" style="grid-column: 1 / -1;">
+              <div class="info-label">Description</div>
+              <div class="info-value">Décision de l’agent de conformité / Directeur de conformité</div>
+              <div class="info-sub">
+                Workflow de validation nécessitant une revue du dossier client et l’enregistrement d’une décision motivée.
+              </div>
+            </div>
+          </div>
+
+          <div class="action-strip">
+            <button class="btn btn-outline">🖐 S’approprier la tâche</button>
+            <button class="btn btn-secondary">📤 Partager</button>
+            <button class="btn btn-secondary">🖨 Imprimer</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <h3>Activité récente</h3>
+            <p>Historique utile pour comprendre le contexte de traitement.</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-icon">✉</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Notification envoyée à l’agent / directeur de conformité</div>
+                <div class="timeline-meta">22/01/2026 — 17:57 • Déclenchement automatique du workflow</div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-icon">👤</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Tâche assignée</div>
+                <div class="timeline-meta">22/01/2026 — 18:02 • Propriétaire : Farah Khamassi</div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-icon">📄</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Fiche client disponible</div>
+                <div class="timeline-meta">Document joint prêt à consultation pour prise de décision.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section style="margin-top: 20px;">
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <h3>Traitement du dossier</h3>
+            <p>Complétez les informations nécessaires et enregistrez votre décision.</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="section-block">
+            <div class="section-title">Données récapitulatives du client</div>
+            <div class="section-content">
+              <div class="field-grid">
+                <div class="field">
+                  <label for="raison-sociale">Raison sociale</label>
+                  <input id="raison-sociale" type="text" value="JURISCONSEILS" readonly />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-title">Prise de décision</div>
+            <div class="section-content">
+              <div class="decision-box">
+                <h4>Décision de conformité</h4>
+                <p>
+                  Cette section constitue l’action principale du parcours. Sélectionnez la décision appropriée
+                  puis renseignez une justification claire et exploitable par les équipes aval.
+                </p>
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label for="decision">Décision de l’agent de conformité / Décision du directeur de conformité *</label>
+                  <select id="decision">
+                    <option value="">Sélectionner une décision</option>
+                    <option>Valider le dossier</option>
+                    <option>Demander un complément d’information</option>
+                    <option>Rejeter le dossier</option>
+                    <option>Escalader pour revue complémentaire</option>
+                  </select>
+                  <div class="hint">Choisissez l’issue du traitement en fonction de l’analyse réalisée.</div>
+                </div>
+
+                <div class="field">
+                  <label for="commentaire">Commentaire / Complément d’information à fournir *</label>
+                  <textarea id="commentaire" placeholder="Décrire la motivation de la décision, les points de vigilance identifiés et les éléments attendus si un complément est requis..."></textarea>
+                  <div class="hint">Le commentaire doit permettre de comprendre la décision sans ambiguïté.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-title">Documents et pièces jointes</div>
+            <div class="section-content">
+              <div class="file-list">
+                <a class="file-link" href="#">
+                  <span>📎 Fiche Client</span>
+                  <span>Ouvrir ↗</span>
+                </a>
+                <a class="file-link" href="#">
+                  <span>📎 Dossier justificatif KYC</span>
+                  <span>Ouvrir ↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-title">Diagramme du workflow</div>
+            <div class="section-content">
+              <div class="diagram-box">
+                Vue simplifiée du workflow.<br>
+                Le diagramme détaillé peut être consulté dans l’onglet dédié afin de ne pas surcharger la zone principale de décision.
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="sticky-actions">
+    <div class="sticky-inner">
+      <div class="sticky-info">
+        <span><strong>Tâche :</strong> Décision JURISCONSEILS</span>
+        <span>•</span>
+        <span><strong>Priorité :</strong> Critique</span>
+        <span>•</span>
+        <span><strong>Statut :</strong> En cours</span>
+      </div>
+
+      <div class="sticky-buttons">
+        <button class="btn btn-danger">Annuler</button>
+        <button class="btn btn-secondary">Enregistrer un brouillon</button>
+        <button class="btn btn-success">Enregistrer la décision</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
